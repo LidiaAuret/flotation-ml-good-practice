@@ -1,7 +1,7 @@
 # %% [markdown]
 # # 01 Explore the data and see why random splits mislead
 #
-# Synthetic 8-cell rougher bank, 1-min samples, 21 days, ore change at day 14.
+# Synthetic 4-cell rougher bank (conc and tailings sumps), 1-min samples, 21 days, ore change at day 14.
 # See data/DATA_CARD.md for every column. `truth_*` and `hidden_*` columns are
 # for evaluation and discussion only: never use them as model inputs.
 
@@ -22,7 +22,7 @@ print(df.describe().T[["mean", "std", "min", "max"]].round(3))
 panels = [
     ("Disturbances", ["feed_rate_tph"], "t/h"),
     ("", ["feed_grade_online_pct"], "% Cu"),
-    ("Manipulated variables", ["air_valve_cells1to4_pct", "air_valve_cells5to8_pct", "frother_pump_speed_pct"], "%"),
+    ("Manipulated variables", ["air_valve_cells1to2_pct", "air_valve_cells3to4_pct", "frother_pump_speed_pct"], "%"),
     ("Target", [TARGET, "truth_recovery_pct"], "%"),
 ]
 fig, axes = plt.subplots(len(panels), 1, figsize=(11, 9), sharex=True)

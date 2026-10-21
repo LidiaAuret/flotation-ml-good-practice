@@ -16,8 +16,15 @@ CV_GAP = 720  # samples (12 h) between ridge CV training and validation blocks
 # Inputs available on line at prediction time.
 LEGIT = [
     "feed_rate_tph", "feed_grade_online_pct",
-    "air_valve_cells1to4_pct", "air_valve_cells5to8_pct", "frother_pump_speed_pct",
+    "air_valve_cells1to2_pct", "air_valve_cells3to4_pct", "frother_pump_speed_pct",
     "tail_valve_mean_pct", "bubble_d32_mean_mm", "gas_velocity_jg_mean_cms",
+]
+# Causes only: measured disturbances and operator moves. Tail valves, d32 and jg
+# are consequences of these (level control, air -> jg -> bubble size), so a
+# what-if model should not hold them fixed.
+CAUSES = [
+    "feed_rate_tph", "feed_grade_online_pct",
+    "air_valve_cells1to2_pct", "air_valve_cells3to4_pct", "frother_pump_speed_pct",
 ]
 # Same-time concentrate and tailings assays: the target is computed from them
 # (two-product formula), so using them as inputs is leakage type L2.
@@ -25,7 +32,7 @@ LEAKY = LEGIT + ["conc_grade_assay_pct", "tail_grade_assay_pct"]
 
 NICE = {
     "feed_rate_tph": "Feed rate", "feed_grade_online_pct": "Feed grade (on-line)",
-    "air_valve_cells1to4_pct": "Air valves, cells 1-4", "air_valve_cells5to8_pct": "Air valves, cells 5-8",
+    "air_valve_cells1to2_pct": "Air valves, cells 1-2", "air_valve_cells3to4_pct": "Air valves, cells 3-4",
     "frother_pump_speed_pct": "Frother pump", "tail_valve_mean_pct": "Tail valves (mean)",
     "bubble_d32_mean_mm": "Bubble d32 (mean)", "gas_velocity_jg_mean_cms": "Gas velocity jg (mean)",
     "conc_grade_assay_pct": "Conc. grade assay", "tail_grade_assay_pct": "Tail grade assay",

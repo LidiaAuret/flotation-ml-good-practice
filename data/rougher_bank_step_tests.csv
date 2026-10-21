@@ -1,6 +1,6 @@
 feature,std_in_data,recovery_up,recovery_down,true_effect_per_std
-feed_rate_tph,45.91293,92.47634,94.74086,-1.13226
-feed_grade_online_pct,0.04826,93.74764,93.55368,0.09698
-air_valve_cells1to4_pct,7.26251,94.25036,92.90457,0.67289
-air_valve_cells5to8_pct,6.78851,94.19581,92.9788,0.60851
-frother_pump_speed_pct,4.58622,93.80675,93.4415,0.18263
+feed_rate_tph,45.91293,73.74457,77.27255,-1.76399
+feed_grade_online_pct,0.04826,75.57334,75.41335,0.07999
+air_valve_cells1to2_pct,7.26251,76.50048,74.29273,1.10388
+air_valve_cells3to4_pct,6.78851,76.42385,74.39218,1.01584
+frother_pump_speed_pct,4.58622,75.78004,75.08798,0.34603

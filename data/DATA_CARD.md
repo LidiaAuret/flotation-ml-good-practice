@@ -3,10 +3,12 @@
 ## 1. `rougher_bank_synthetic.csv`: synthetic copper rougher bank
 
 **Provenance.** Generated with a dynamic, first-principles flotation bank model
-(Auret et al., 2025, *IFAC-PapersOnLine* 59(32), 60-65): an 8-cell copper
+(Auret et al., 2025, *IFAC-PapersOnLine* 59(32), 60-65, <https://doi.org/10.1016/j.ifacol.2025.12.397>): a 4-cell copper
 rougher bank with froth recovery, bubble size (frother concentration and jg
 dependent), pulp-level dynamics and per-cell PI level control on the tail
-valves. The simulator code itself is not public; this dataset and the step
+valves. All four concentrates go to one concentrate sump; the last cell's tail
+goes to a tailings sump. Both sumps have PI level control on the pump speed,
+and the concentrate and tail assays are taken on the sump pump discharges. The simulator code itself is not public; this dataset and the step
 tests are released so that methods can be compared on a common, known truth.
 No plant data were used.
 
@@ -16,11 +18,12 @@ No plant data were used.
 |---|---|---|
 | Feed solids rate | Ornstein-Uhlenbeck (OU), relative std 5 %, time constant 3 h | yes, 1 % noise |
 | Feed Cu grade | OU, relative std 12 %, time constant 6 h | yes, two independent readings (2 % noise each) |
-| Air valves, cells 1-4 and 5-8 | piecewise-constant operator moves, 38-62 %, mean interval 4 h | yes |
+| Air valves, cells 1-2 and 3-4 | piecewise-constant operator moves, 38-62 %, mean interval 4 h | yes |
 | Frother pump speed | piecewise-constant operator moves, 40-60 %, mean interval 8 h | yes |
 | Fast-floating share of Cu (liberation) | slow OU in logit space (time constant 8 h) | **no** (hidden) |
 | Ore change at day 14 | fast-floating Cu share falls (about 0.16 to 0.07 on average) and fast-floating gangue rises | **no** |
 | Pulp levels | PI control on tail valves (Kc = 12 %/m, TI = 0.2 h) | mean level and mean valve opening |
+| Sump levels | PI control on pump speed (Kc = 10 %/m, TI = 0.3 h) | each sump level |
 
 **Columns.**
 
@@ -29,13 +32,14 @@ No plant data were used.
 | `time_h`, `day` | h, integer day | time stamp |
 | `feed_rate_tph` | t/h | measured disturbance (input) |
 | `feed_grade_online_pct` | % Cu | measured disturbance (input): on-line reading, independent of the assay below |
-| `air_valve_cells1to4_pct`, `air_valve_cells5to8_pct` | % open | manipulated (input) |
+| `air_valve_cells1to2_pct`, `air_valve_cells3to4_pct` | % open | manipulated (input) |
 | `frother_pump_speed_pct` | % | manipulated (input) |
 | `tail_valve_mean_pct` | % open | intermediate, set by the level controllers (input) |
 | `pulp_level_mean_m` | m | intermediate (controlled) |
+| `conc_sump_level_m`, `tail_sump_level_m` | m | intermediate (controlled) |
 | `bubble_d32_mean_mm` | mm | intermediate (mean Sauter bubble diameter over the cells) |
 | `gas_velocity_jg_mean_cms` | cm/s | intermediate (mean superficial gas velocity) |
-| `feed_grade_assay_pct`, `conc_grade_assay_pct`, `tail_grade_assay_pct` | % Cu | analyser assays, relative noise 2 %, 3 %, 4 % |
+| `feed_grade_assay_pct`, `conc_grade_assay_pct`, `tail_grade_assay_pct` | % Cu | analyser assays, relative noise 2 %, 3 %, 4 %; conc and tail on the sump discharges |
 | `recovery_assay_pct` | % | **target**: two-product recovery R = c(f - t)/[f(c - t)] x 100 from the three assays, clipped to 0-100 |
 | `truth_recovery_pct`, `truth_*_grade_pct` | % | noise-free simulator values: for evaluation only |
 | `hidden_fast_floating_cu_share` | fraction | unmeasured disturbance: for discussion only |
@@ -47,7 +51,7 @@ No plant data were used.
   them). They are included to demonstrate this leakage.
 * Recommended splits: train days 0-10, gap 0.5 d, test days 10.5-14 (same ore);
   out-of-time: train days 0-14, test days 14-21 (new ore).
-* Recovery has lag-1 autocorrelation of about 0.95 at 1-min sampling; treat
+* Recovery has lag-1 autocorrelation of about 0.85 at 1-min sampling; treat
   rows as strongly dependent.
 
 ## 2. `rougher_bank_step_tests.csv`: true input effects

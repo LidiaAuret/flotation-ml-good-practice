@@ -14,7 +14,7 @@ scikit-learn) so that the evaluation design, not the model, is the focus.
 
 | Path | Content |
 |---|---|
-| `data/rougher_bank_synthetic.csv` | 21 days of 1-min data from a simulated 8-cell copper rougher bank, with an ore change at day 14. Measured values, plant-style assays **and** the simulator's true values. See [`data/DATA_CARD.md`](data/DATA_CARD.md). |
+| `data/rougher_bank_synthetic.csv` | 21 days of 1-min data from a simulated 4-cell copper rougher bank with concentrate and tailings sumps, with an ore change at day 14. Measured values, plant-style assays **and** the simulator's true values. See [`data/DATA_CARD.md`](data/DATA_CARD.md). |
 | `data/rougher_bank_step_tests.csv` | True effect of each input on recovery, from step tests on the simulator: the "ground truth" against which model explanations are checked. |
 | `data/e2epm_blending_tank.csv` | 28 days of 100 s data from the end-to-end process monitoring (E2EPM) blending-tank simulator, with sensor drift and valve faults, measured and true values. Regenerate with `examples/e2epm_blending_tank/simulate.py`. |
 | `src/goodpractice/` | Thin helpers: random vs blocked splits, effective sample size, the two model classes, scores, plot style. |
@@ -25,7 +25,7 @@ scikit-learn) so that the evaluation design, not the model, is the focus.
 ## Quick start
 
 ```bash
-git clone <this repository>
+git clone https://github.com/LidiaAuret/flotation-ml-good-practice.git
 cd flotation-ml-good-practice
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e .            # or: pip install -r requirements.txt
@@ -48,35 +48,54 @@ Jupyter (via jupytext). Figures go to `figures/`.
 
 Target: plant-style recovery from the two-product formula on assays,
 R = c(f - t) / [f(c - t)]. Inputs: feed rate, on-line feed grade, air valves
-(cells 1-4, 5-8), frother pump, tail valves, mean bubble size d32, mean
+(cells 1-2, 3-4), frother pump, tail valves, mean bubble size d32, mean
 superficial gas velocity jg.
 
-**01 Explore and splits.** Recovery has lag-1 autocorrelation ~0.95 at 1-min
+**01 Explore and splits.** Recovery has lag-1 autocorrelation ~0.85 at 1-min
 sampling. With n_eff/n = (1 - rho)/(1 + rho), ~20 000 one-minute samples
-before the ore change carry the information of only a few hundred independent
-samples. In a random split, the median distance from a test sample to its
+before the ore change carry the information of only about 1 600 independent
+samples, and hourly samples about 100. In a random split, the median distance from a test sample to its
 nearest training sample is one minute.
 
 **02 Evaluation designs.** Same data, same models, four test designs:
 
 | Design | Ridge R² | Boosted trees R² |
 |---|---|---|
-| A Random split of 1-min samples | 0.67 | 0.92 |
-| B Blocked time split, 12 h gap, same ore | 0.51 | 0.38 |
-| C Train before ore change, test after | 0.40 | 0.10 |
-| D As B, plus same-time conc. and tail assays (leaky) | 0.93 | 0.86 |
+| A Random split of 1-min samples | 0.56 | 0.81 |
+| B Blocked time split, 12 h gap, same ore | 0.49 | 0.36 |
+| C Train before ore change, test after | 0.11 | 0.01 |
+| D As B, plus same-time conc. and tail assays (leaky) | 0.90 | 0.88 |
 
 The random split ranks the boosted trees far ahead; honest designs reverse
 the ranking. Design D looks excellent because the target is computed from
 two of its inputs (Kapoor & Narayanan's L2, illegitimate features).
 The ridge model has 9 parameters; the boosted model ~18 000 tree nodes.
 
+*Fit once, report, deploy.* The second part of 02 fits each model once on
+a random 80 % of days 0-10, reports the held-out 20 %, and then applies the
+same model, unchanged, to the days that follow:
+
+| Period | Ridge R² | Boosted trees R² |
+|---|---|---|
+| Random-split test (days 0-10) | 0.49 | 0.78 |
+| Later, same ore (days 10-14) | 0.45 | 0.32 |
+| Later, after ore change (days 14-21) | 0.04 | -0.06 |
+
+The boosted model's reported 0.78 halves on the very next days; the ridge
+model's random-split score holds up far better on the same ore. Neither
+survives the new ore. Parity plots: `figures/flotation/02_fit_once.png`.
+
 **03 Explanations.** Standardised ridge coefficients and SHAP slopes are
 compared with step-test truth. In closed-loop data, mediators (d32, jg) and
 co-moving inputs take credit for each other: neither method recovers the
 large negative feed-rate effect, and SHAP credits the air valves with a
 small fraction of their real effect. Explanations describe the model, not
-the plant. The script also shows that leave-one-out tuning of ridge alpha
+the plant. Training the boosted tree on causes only (feed, air, frother;
+no tail valves, d32 or jg, which are consequences of those inputs) moves
+the SHAP slopes towards the truth: the feed-rate effect grows from -0.05 to
+-0.62 against a true -1.76, the air valves rise to about 70 % of their real
+effect, and frother gets the right sign. The price is a lower test R²
+(0.36 to 0.15), and the feed-grade effect stays overstated. The script also shows that leave-one-out tuning of ridge alpha
 (sklearn's `RidgeCV` default) on autocorrelated data picks too little
 regularisation and produces unstable coefficients; here alpha is chosen by
 forward-chaining CV with a 12 h gap.
@@ -144,8 +163,8 @@ Findings (RMSE against the true C, kg/m3):
 ## References
 
 * Kapoor, S. & Narayanan, A. (2023). Leakage and the reproducibility crisis in machine-learning-based science. *Patterns* 4(9), 100804.
-* Auret, L. & Louw, T.M. (2023). End-to-end process monitoring. *IFAC-PapersOnLine* 56(2), 2650-2656. <!-- TODO: full title and DOI -->
-* Auret, L. et al. (2025). Dynamic flotation model. *IFAC-PapersOnLine* 59(32), 60-65. <!-- TODO: full title, authors and DOI -->
+* Auret, L. & Louw, T.M. (2023). End-to-end process monitoring: Challenges and framework for case study design. *IFAC-PapersOnLine* 56(2), 2650-2656. <https://doi.org/10.1016/j.ifacol.2023.10.1355>
+* Auret, L., Haasbroek, A.L., Louw, T.M., Geldenhuys, S. & Bezuidenhout, J. (2025). A dynamic flotation model for rapid prototyping of industrial control and monitoring solutions. *IFAC-PapersOnLine* 59(32), 60-65. <https://doi.org/10.1016/j.ifacol.2025.12.397>
 * Bayley, G.V. & Hammersley, J.M. (1946). The "effective" number of independent observations in an autocorrelated time series. *J. R. Stat. Soc. Suppl.* 8(2), 184-197.
 * Lundberg, S.M. et al. (2020). From local explanations to global understanding with explainable AI for trees. *Nature Machine Intelligence* 2, 56-67.
 
@@ -157,3 +176,8 @@ If you use the data or examples, please cite as in [`CITATION.cff`](CITATION.cff
 
 Issues and pull requests with further examples (other splits, uncertainty,
 physics-informed models) are welcome.
+
+## Contact
+
+Questions, comments and suggestions are welcome: Lidia Auret,
+`lidia.auret` *at* `stonethree` *dot* `com`.
