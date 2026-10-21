@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use these data or examples, please cite them as below."
+title: "flotation-ml-good-practice: open data and examples for evaluating process ML models"
+type: software
+authors:
+  - family-names: Auret
+    given-names: Lidia
+version: 0.1.0
+date-released: 2026-10-09
+license: MIT
+keywords: [flotation, machine learning, data leakage, soft sensor, process monitoring, benchmark]

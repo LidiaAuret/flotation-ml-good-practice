@@ -1,0 +1,8 @@
+# E2EPM simulator is fetched by get_simulator.py, not vendored
+examples/e2epm_blending_tank/external/
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+*.egg-info/
+.pytest_cache/

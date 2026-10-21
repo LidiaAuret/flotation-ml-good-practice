@@ -1,0 +1,6 @@
+feature,std_in_data,recovery_up,recovery_down,true_effect_per_std
+feed_rate_tph,45.91293,92.47634,94.74086,-1.13226
+feed_grade_online_pct,0.04826,93.74764,93.55368,0.09698
+air_valve_cells1to4_pct,7.26251,94.25036,92.90457,0.67289
+air_valve_cells5to8_pct,6.78851,94.19581,92.9788,0.60851
+frother_pump_speed_pct,4.58622,93.80675,93.4415,0.18263
