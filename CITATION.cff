@@ -9,3 +9,18 @@ version: 0.1.0
 date-released: 2026-10-09
 license: MIT
 keywords: [flotation, machine learning, data leakage, soft sensor, process monitoring, benchmark]
+references:
+  - type: speech
+    title: "From promising to proven: Good practice for machine learning in flotation"
+    authors:
+      - family-names: Auret
+        given-names: Lidia
+        affiliation: Stone Three
+    conference:
+      name: "XXXII International Mineral Processing Congress (IMPC 2026)"
+      city: Cape Town
+      country: ZA
+      date-start: 2026-10-18
+      date-end: 2026-10-22
+    date-published: 2026-10-22
+    notes: "Keynote address, Flotation session. Slides: slides/Auret_IMPC2026_keynote_slides.pdf"

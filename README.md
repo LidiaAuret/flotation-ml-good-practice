@@ -4,7 +4,9 @@ Open data and small, runnable examples on **evaluating machine-learning models
 for process data honestly**: time-aware splits, leakage, baselines, physics
 features, and what model explanations can and cannot tell you.
 
-Companion material to the IMPC 2026 keynote by Lidia Auret. The examples are
+Companion material to the IMPC 2026 keynote by Lidia Auret,
+*From promising to proven: Good practice for machine learning in flotation*
+([slides](slides/Auret_IMPC2026_keynote_slides.pdf)). The examples are
 deliberately simple (ridge regression and gradient-boosted trees in
 scikit-learn) so that the evaluation design, not the model, is the focus.
 
@@ -21,6 +23,7 @@ scikit-learn) so that the evaluation design, not the model, is the focus.
 | `examples/flotation/` | Three scripts (01-03) on the rougher-bank data. |
 | `examples/e2epm_blending_tank/` | Fetch the open-source E2EPM simulator, generate data, build a concentration soft sensor. |
 | `tests/` | `pytest` checks for the helpers and the mass-balance soft sensor. |
+| `slides/` | PDF of the IMPC 2026 keynote slides. |
 
 ## Quick start
 
@@ -172,7 +175,15 @@ Findings (RMSE against the true C, kg/m3):
 
 Code: MIT ([`LICENSE`](LICENSE)). Data: CC BY 4.0 ([`data/LICENSE-DATA.md`](data/LICENSE-DATA.md)).
 The E2EPM simulator is downloaded separately and keeps its own MIT licence.
+Slides: © Stone Three 2026, shared with permission; not covered by the code or data licences.
 If you use the data or examples, please cite as in [`CITATION.cff`](CITATION.cff).
+
+To cite the keynote itself:
+
+> Auret, L. (2026). *From promising to proven: Good practice for machine
+> learning in flotation* [Keynote address, Flotation session]. XXXII International
+> Mineral Processing Congress (IMPC 2026), Cape Town, South Africa, 22 October 2026.
+> <https://github.com/LidiaAuret/flotation-ml-good-practice>
 
 Issues and pull requests with further examples (other splits, uncertainty,
 physics-informed models) are welcome.
